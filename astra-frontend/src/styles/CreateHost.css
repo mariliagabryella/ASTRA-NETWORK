@@ -1,0 +1,159 @@
+/* CreateHost.css - Expandido & Mobile Friendly */
+
+:root {
+    --primary-purple: #8e44ad;
+    --accent-purple: #a29bfe;
+    --card-bg: #ffffff;
+    --text-main: #1a1a1a;
+    --text-muted: #7a7a7a;
+    --input-fill: #f9f9fb;
+    --border-color: #eaeaea;
+    --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Container que ocupa a largura total */
+.host-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px; /* Menos padding lateral para mobile */
+    width: 100%;
+}
+
+.host-card {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 550px; /* Um pouco mais largo para expandir o conteúdo */
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+}
+
+.host-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-main);
+    text-align: left; /* Alinhado à esquerda para parecer mais moderno */
+    margin-bottom: 25px;
+    border-left: 4px solid var(--primary-purple);
+    padding-left: 15px;
+}
+
+/* Espaçamento expandido entre os grupos */
+.form-group {
+    margin-bottom: 22px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* Box de texto bonitas e limpas */
+input[type="text"], 
+input[type="number"], 
+select, 
+textarea {
+    width: 100%;
+    background-color: var(--input-fill);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 16px; /* Evita zoom automático no iPhone */
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    -webkit-appearance: none; /* Limpa estilo padrão mobile */
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(142, 68, 173, 0.1);
+}
+
+/* Flexbox para inputs lado a lado que quebram em mobile */
+.input-with-select, .input-with-port {
+    display: flex;
+    gap: 10px;
+}
+
+/* Ajuste para mobile: se a tela for pequena, eles empilham */
+@media (max-width: 480px) {
+    .input-with-select, .input-with-port {
+        flex-direction: column;
+    }
+    .port-input, .port {
+        width: 100% !important;
+    }
+    .host-card {
+        padding: 20px 15px;
+        border-radius: 15px;
+    }
+}
+
+/* Toggles e Checkbox mais discretos */
+.checkbox-group {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 12px;
+    background: var(--input-fill);
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.checkbox-group input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-purple);
+}
+
+/* Divisórias mais finas */
+.section-title {
+    font-size: 11px;
+    color: var(--primary-purple);
+    font-weight: 800;
+    margin: 30px 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #eee;
+}
+
+/* Botão Estilo Premium (Expandido) */
+.btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary-purple), #6c3483);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(142, 68, 173, 0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(142, 68, 173, 0.35);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}

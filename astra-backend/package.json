@@ -1,12 +1,18 @@
 {
   "name": "astra-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Plataforma de gerenciamento de redes Nebula",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
-  "keywords": [],
+  "keywords": [
+    "nebula",
+    "astra",
+    "overlay-network",
+    "vpn"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -16,7 +22,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.5.0",
+    "mongoose": "^9.6.0",
     "tweetnacl": "^1.0.3",
     "yaml": "^2.8.3"
   },
