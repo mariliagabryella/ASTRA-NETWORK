@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { RefreshCw, Trash2, Settings, Plus } from 'lucide-react';
 import '../styles/ManageHosts.css';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../config';
 
 
 const ManageHosts = () => {
@@ -11,7 +12,7 @@ const ManageHosts = () => {
 
     const fetchHosts = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/hosts');
+            const response = await fetch(`${API_URL}`);
             const data = await response.json();
             console.log("Dados que chegaram do Banco:", data.data); // ADICIONE ISTO
             if (data.success) setHosts(data.data);
@@ -24,7 +25,7 @@ const ManageHosts = () => {
         e.stopPropagation(); // Impede que o clique na linha (navegação) aconteça
         if (window.confirm("Tens a certeza que desejas eliminar este host?")) {
             try {
-                const response = await fetch(`http://localhost:5000/api/hosts/${id}`, { method: 'DELETE' });
+                const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
                 if (response.ok) fetchHosts(); // Recarrega a lista
             } catch (error) {
                 console.error("Erro ao eliminar:", error);

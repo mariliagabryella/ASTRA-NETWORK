@@ -102,3 +102,155 @@ body {
   font-weight: 400;
   color: #e5e7eb;       
 */
+
+/* Camada de fundo que bloqueia o resto do site */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 252, 252, 0.85); /* Fundo bem escuro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(8px); /* Desfoca o que está por trás */
+}
+
+/* Cartão da Janela/Modal */
+.modal-content {
+  background-color: #101a31;
+  padding: 40px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 450px;
+  color: #979ba1;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: modalAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Estilo para o ecrã de Boas-Vindas */
+.welcome-card {
+  max-width: 550px;
+  padding: 60px 40px;
+}
+
+.logo-huge {
+  margin-bottom: 20px;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+}
+
+.modal-title {
+  margin-bottom: 12px;
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.modal-description {
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+/* Inputs */
+.input-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #334155;
+  font-size: 14px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  font-size: 16px;
+  transition: all 0.2s;
+  box-sizing: border-box; /* Garante que o padding não aumenta o tamanho */
+}
+
+.modal-input:focus {
+  border-color: #6366f1;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+/* Botão */
+.modal-button {
+    font-family: 'Poppins', sans-serif;
+  width: 100%;
+  padding: 16px;
+  background-color: #55569b;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s, background 0.2s;
+  margin-top: 10px;
+}
+
+.modal-button:hover {
+  background-color: #4f46e5;
+  transform: translateY(-2px);
+}
+
+.modal-button:active {
+  transform: translateY(0);
+}
+/* Estilo da lista de notas */
+.setup-notes {
+  flex: 1;
+ 
+  padding: 15px;
+  border-radius: 12px;
+ text-align: left; /* Garante que o texto dentro das notas nunca centralize */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+
+.setup-notes ul {
+  margin: 0;
+  padding: 0 0 0 18px;
+  font-size: 14px;
+  color: #9ca1a7;
+
+}
+
+.setup-notes li {
+  margin-bottom: 8px;
+}
+
+.setup-notes code {
+  background: #e2e8f0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: #475569;
+}
+
+/* Animação suave para a janela aparecer */
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

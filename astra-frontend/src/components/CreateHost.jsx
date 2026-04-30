@@ -2,6 +2,8 @@ import React,{ useState } from'react';
 import { useEffect } from 'react';
 import '../styles/CreateHost.css';
 
+import { API_URL } from '../config';
+
 const CreateHost = () => {
     const [formData, setFormData] = useState({
         name: '',
@@ -15,52 +17,65 @@ const CreateHost = () => {
         expiry: '2026-05-27',
         description: ''
     });
-
+// 1. O Único useEffect necessário
 useEffect(() => {
-    const getSuggestion = async () => {
+    const initializeFormData = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/hosts/next-ip');
-            const data = await response.json();
-            
-            if (data.success) {
-                // MUITO IMPORTANTE: O nome aqui tem de ser igual ao do teu useState
-                // Se usaste [host, setHost], usa setHost. 
-                // Se usaste [formData, setFormData], usa setFormData.
-                setFormData(prev => ({ 
-                    ...prev, 
-                    ip: data.suggestedIp, 
-                    mask: data.mask 
+            // Chamamos as duas coisas ao mesmo tempo para ser mais rápido
+            const [netRes, ipRes] = await Promise.all([
+           fetch(`${API_URL}/network-config`),
+fetch(`${API_URL}/next-ip`)
+            ]);
+
+            const netData = await netRes.json();
+            const ipData = await ipRes.json();
+
+            if (netData.success && ipData.success) {
+                setFormData(prev => ({
+                    ...prev,
+                    // Prioridade: IP sugerido (sequencial) -> ou IP base da rede
+                    ip: ipData.suggestedIp || netData.baseIp,
+                    // Prioridade: Máscara da BD -> ou "/24" como padrão
+                    mask: netData.mask || "24"
                 }));
             }
         } catch (error) {
-            console.error("Erro ao carregar sugestão:", error);
+            console.error("Erro ao carregar configurações iniciais:", error);
         }
     };
-    getSuggestion();
-}, []);
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value
+    initializeFormData();
+}, []); // Corre apenas uma vez ao entrar na página
+
+// 2. Função de alteração (Unificada)
+const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+    }));
+};
+
+// 3. Função de envio
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Enviando Host...", formData);
+
+    try {
+        const response = await fetch(`${API_URL}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
         });
-    };
-    const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log("BOTÃO CLICADO! Enviando dados...", formData); // <--- Adicione isto
-  
-  try {
-    const response = await fetch('http://localhost:5000/api/hosts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
-    });
-    const data = await response.json();
-    console.log("RESPOSTA DO SERVIDOR:", data); // <--- E isto
-  } catch (err) {
-    console.error("ERRO NO FETCH:", err);
-  }
+        
+        const data = await response.json();
+        if (data.success) {
+            console.log("Host criado com sucesso!");
+           
+        }
+    } catch (err) {
+        console.error("Erro ao criar host:", err);
+    }
 };
 
     // const handleSubmit = async (e) => {
@@ -83,18 +98,24 @@ useEffect(() => {
                         <label>Nome :</label>
                         <input type="text" name="name" value={formData.name} onChange={handleChange} />
                     </div>
-
-                    <div className="form-group row">
-                        <label>Ip :</label>
-                        <div className="input-with-select">
-                            <input type="text" name="ip" value={formData.ip} onChange={handleChange} />
-                            <select name="mask" value={formData.mask} onChange={handleChange}>
-                                <option value="/24">/24</option>
-                                <option value="/16">/16</option>
-                            </select>
-                        </div>
-                    </div>
-
+<div className="form-group row">
+    <label>Ip :</label>
+    <div className="input-with-select">
+        {/* O value={formData.ip} mostra o que veio da BD, mas o onChange permite mudar */}
+        <input 
+            type="text" 
+            name="ip" 
+            value={formData.ip} 
+            onChange={handleChange} 
+        />
+        
+        <select name="mask" value={formData.mask} onChange={handleChange}>
+            <option value="24">/24</option>
+            <option value="16">/16</option>
+            <option value="8">/8</option>
+        </select>
+    </div>
+</div>
                     <div className="form-group row">
                         <label>Grupos :</label>
                         <select name="groups" value={formData.groups} onChange={handleChange}>

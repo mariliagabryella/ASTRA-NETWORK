@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Shield } from 'lucide-react';
 import '../styles/ManageHosts.css';
+import { API_URL } from '../config';
 
 const HostDetails = () => {
     const { id } = useParams();
@@ -12,7 +13,7 @@ const HostDetails = () => {
     useEffect(() => {
         const fetchHost = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/hosts/${id}`);
+                const response = await fetch(`${API_URL}/${id}`);
                 const data = await response.json();
                 if (data.success) {
                     setHost(data.data);
@@ -28,7 +29,7 @@ const HostDetails = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/hosts/${id}`, {
+            const response = await fetch(`${API_URL}/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

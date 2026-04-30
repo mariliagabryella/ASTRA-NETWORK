@@ -1,31 +1,43 @@
 const Host = require('../models/Host');
+const NetworkConfig = require('../models/NetworkConfig');
 const cryptoService = require('../services/cryptoService');
-// Adiciona no final do hostController.js
+
+
 exports.getNextAvailableIp = async (req, res) => {
     try {
-        // Busca o host mais recente para ver o último IP usado
+        // 1. Tenta buscar a configuração de rede definida no Setup Inicial
+        const config = await NetworkConfig.findOne();
+        
+        // Se não houver config, usa um fallback, mas o ideal é vir da BD
+        let baseIp = config ? config.baseIp : "10.0.0"; 
+        let mask = config ? config.mask : "24";
+
+        // 2. Busca o host mais recente para ver a sequência
         const lastHost = await Host.findOne().sort({ createdAt: -1 });
         
         let nextNumber = 1;
-        let baseIp = "10.0.0"; // Teu padrão
 
         if (lastHost && lastHost.ip) {
             const parts = lastHost.ip.split('.');
             if (parts.length === 4) {
-                baseIp = `${parts[0]}.${parts[1]}.${parts[2]}`;
-                nextNumber = parseInt(parts[3]) + 1;
+                const currentBase = `${parts[0]}.${parts[1]}.${parts[2]}`;
+                // Se o último host for da mesma rede, incrementa
+                if (currentBase === baseIp) {
+                    nextNumber = parseInt(parts[3]) + 1;
+                }
             }
         }
 
-        // Se passar de 254, volta para o 1 (limite de rede /24)
+        // Limite de rede /24
         if (nextNumber > 254) nextNumber = 1;
 
         res.status(200).json({ 
             success: true, 
             suggestedIp: `${baseIp}.${nextNumber}`,
-            mask: "/24"
+            mask: mask // Retorna a máscara que guardaste na BD!
         });
     } catch (error) {
+        console.error("Erro no next-ip:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 };
@@ -113,6 +125,72 @@ exports.deleteHost = async (req, res) => {
     }
 };
 
+
+exports.getNetworkConfig = async (req, res) => {
+    try {
+        // Tenta buscar na BD
+        const config = await NetworkConfig.findOne();
+        
+        // Se a BD falhar ou estiver vazia, enviamos um JSON de sucesso na mesma
+        // Isto evita o erro 500 no frontend
+        if (!config) {
+            return res.status(200).json({ 
+                success: true, 
+                baseIp: "10.0.0", 
+                mask: "24",
+                message: "Usando valores padrão" 
+            });
+        }
+
+        return res.status(200).json({ 
+            success: true, 
+            baseIp: config.baseIp, 
+            mask: config.mask 
+        });
+    } catch (error) {
+        // Se isto não aparecer no terminal, a rota está mal definida no server.js
+        console.log("ERRO NO CONTROLLER:", error.message);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+exports.saveNetworkConfig = async (req, res) => {
+    // 1. Log para debug no terminal
+    console.log("[Astra] Pedido POST recebido. Body:", req.body);
+
+    // 2. Proteção contra body vazio (evita o erro 500)
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ 
+            success: false, 
+            error: "O servidor não recebeu dados. Verifica o Content-Type." 
+        });
+    }
+
+    try {
+        const { baseIp, mask } = req.body;
+
+        // Validação simples
+        if (!baseIp || !mask) {
+            return res.status(400).json({ success: false, error: "IP e Máscara são obrigatórios." });
+        }
+
+        // 3. Gravação na BD (Versão atualizada sem Warnings)
+        const config = await NetworkConfig.findOneAndUpdate(
+            {}, 
+            { baseIp, mask }, 
+            { 
+                upsert: true, 
+                returnDocument: 'after', // Substitui o 'new: true'
+                setDefaultsOnInsert: true 
+            }
+        );
+
+        res.status(200).json({ success: true, data: config });
+    } catch (error) {
+        console.error("[ERRO BD]:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
 // No seu arquivo de rotas (ex: server.js)
 // app.delete('/api/hosts/:id', hostController.deleteHost);
 // const Host = require('../models/Host');
