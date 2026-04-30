@@ -3,7 +3,7 @@
 /* Reset básico para garantir que o layout ocupa o ecrã todo */
 body {
     margin: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Poppins', sans-serif;
     background-color: #f8fafc;
 }
 
@@ -16,23 +16,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 50px;
+    height: 150px;
+    padding: 1px 50px;
     background-color: #1e293b; /* Azul escuro */
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* Logo Astra */
-.logo {
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #818cf8; /* Roxo vibrante */
-    text-transform: uppercase;
-}
-
-.logo span {
-    font-weight: 300;
-    color: #ffffff;
 }
 
 /* Menu de Links */
@@ -42,19 +29,19 @@ body {
 }
 
 .nav-link {
-    color: #cbd5e1; /* Cinza claro */
+    color: #ffffff; /* Cinza claro */
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     transition: all 0.2s ease;
     padding: 8px 12px;
     border-radius: 6px;
 }
 
-.nav-link:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
-}
+/* .nav-link:hover {
+    color: #0000ff;
+   
+} */
 
 /* Área de Conteúdo Principal */
 .main-content {
@@ -91,3 +78,27 @@ body {
 .clickable-row:hover {
     background-color: #f8fafc;
 }
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.logo-img {
+  width: 200px;          /* ajuste conforme o tamanho desejado */
+  height: auto;
+}
+
+/* .logo-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #a855f7;       
+}
+
+.logo-text span {
+     font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  color: #e5e7eb;       
+*/

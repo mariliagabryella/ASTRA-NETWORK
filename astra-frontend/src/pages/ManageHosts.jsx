@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RefreshCw, Trash2, Settings,Plus}from 'lucide-react';
+import { RefreshCw, Trash2, Settings, Plus } from 'lucide-react';
 import '../styles/ManageHosts.css';
 import { Link } from 'react-router-dom';
 
@@ -9,16 +9,16 @@ const ManageHosts = () => {
     const [hosts, setHosts] = useState([]);
     const navigate = useNavigate();
 
-const fetchHosts = async () => {
-    try {
-        const response = await fetch('http://localhost:5000/api/hosts');
-        const data = await response.json();
-        console.log("Dados que chegaram do Banco:", data.data); // ADICIONE ISTO
-        if (data.success) setHosts(data.data);
-    } catch (error) {
-        console.error("Erro:", error);
-    }
-};
+    const fetchHosts = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/hosts');
+            const data = await response.json();
+            console.log("Dados que chegaram do Banco:", data.data); // ADICIONE ISTO
+            if (data.success) setHosts(data.data);
+        } catch (error) {
+            console.error("Erro:", error);
+        }
+    };
 
     const deleteHost = async (e, id) => {
         e.stopPropagation(); // Impede que o clique na linha (navegação) aconteça
@@ -35,33 +35,24 @@ const fetchHosts = async () => {
     useEffect(() => { fetchHosts(); }, []);
 
     return (
-<div className="manage-container">
-    <header className="manage-header">
-        <h2 className="manage-title">Inventário de Rede</h2>
-        
-        {/* Container para alinhar os botões à direita */}
-        <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={fetchHosts} className="refresh-btn">
-                <RefreshCw size={18} /> Atualizar
-            </button>
+        <div className="manage-container">
+            <header className="manage-header">
+                <h2 className="manage-title">Inventário de Rede</h2>
 
-            {/* Novo Botão de Mais */}
-            <Link 
-                to="/provision" 
-                className="refresh-btn" 
-                style={{ 
-                    backgroundColor: '#6366f1', 
-                    color: 'white', 
-                    textDecoration: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                }}
-            >
-                <Plus size={18} /> Novo Host
-            </Link>
-        </div>
-    </header>
+                {/* Container para alinhar os botões à direita */}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button onClick={fetchHosts} className="refresh-btn">
+                        <RefreshCw size={18} /> Atualizar
+                    </button>
+
+                    {/* Novo Botão de Mais */}
+                    <Link to="/provision" className="refresh-btn"
+                    style={{ textDecoration: 'none',gap: '8px'}}
+                    >
+                        <Plus size={18} /> Novo Host
+                    </Link>
+                </div>
+            </header>
 
             <div className="table-card">
                 <table className="hosts-table">
@@ -84,17 +75,17 @@ const fetchHosts = async () => {
                             >
                                 <td><strong>{host.name}</strong></td>
                                 <td><span className="ip-badge">{host.ip}</span></td>
-        <td>
-    {host.createdAt ? (
-        new Date(host.createdAt).toLocaleDateString('pt-PT', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        })
-    ) : (
-        <span style={{ color: '#94a3b8' }}>Sem data</span>
-    )}
-</td>
+                                <td>
+                                    {host.createdAt ? (
+                                        new Date(host.createdAt).toLocaleDateString('pt-PT', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric'
+                                        })
+                                    ) : (
+                                        <span style={{ color: '#94a3b8' }}>Sem data</span>
+                                    )}
+                                </td>
                                 <td>{host.description || 'Sem descrição'}</td>
                                 <td className={host.isLighthouse ? 'text-yes' : 'text-no'}>
                                     {host.isLighthouse ? 'Sim' : 'Não'}
