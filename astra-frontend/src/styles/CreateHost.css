@@ -21,8 +21,7 @@
 
 .host-card {
     background: var(--card-bg);
-    width: 100%;
-    max-width: 550px; /* Um pouco mais largo para expandir o conteúdo */
+    width: 1556px;
     padding: 30px 25px;
     border-radius: 20px;
     box-shadow: var(--shadow-soft);

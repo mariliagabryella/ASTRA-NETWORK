@@ -23,7 +23,7 @@ app.put('/api/hosts/:id', hostController.updateHost);
 app.delete('/api/hosts/:id', hostController.deleteHost);
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`[Astra] Servidor rodando em http://localhost:${PORT}`);
 });
