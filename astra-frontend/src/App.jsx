@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 import CreateHost from './components/CreateHost';
 import ManageHosts from './pages/ManageHosts';
 import HostDetails from './pages/HostDetails';
+import Settings from './pages/Settings';
 import logoWhite from "./assets/logo_white.png";
 import { API_URL } from './config';
 import './App.css';
@@ -126,6 +127,7 @@ const handleSaveNetwork = async (config) => {
                </div>
               <div className="nav-menu">
                 <Link to="/manage" className="nav-link">Inventário de Rede</Link>
+                <Link to="/settings" className="nav-link">Configurações</Link>
               </div>
             </nav>
 
@@ -134,6 +136,7 @@ const handleSaveNetwork = async (config) => {
                 <Route path="/provision" element={<CreateHost />} />
                 <Route path="/manage" element={<ManageHosts />} />
                 <Route path="/host/:id" element={<HostDetails />} />
+                <Route path="/settings" element={<Settings />} />
                 {/* Redireciona a página inicial para o inventário */}
                 <Route path="/" element={<Navigate to="/manage" />} />
               </Routes>

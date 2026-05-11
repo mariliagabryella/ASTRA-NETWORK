@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 **.env
+**ca.key
 **.env.local
 node_modules/
 dist/

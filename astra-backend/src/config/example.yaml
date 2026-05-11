@@ -1,0 +1,57 @@
+# https://github.com/slackhq/nebula/blob/master/examples/config.yml
+
+pki:
+  ca: | # __CA__
+  cert: | # __CERT__
+  key: | # __KEY__
+
+static_host_map: # __STATIC_HOST_MAP__
+  #  <ip interno do nebula>: ["ip ou site publico:porta"]
+  # exemplos:
+  #   "192.168.100.1": ["100.64.22.11:4242"]
+  #   "192.168.100.4": ["lighthouse.site.com:4242", "3.5.6.7:4242"]
+
+
+lighthouse:
+  am_lighthouse: false # preecnher, quando se marca lighhouse, ele fica a true
+  interval: 60
+  hosts:  # __LIGHTHOUSE_HOSTS__
+  # exemplo, com os ips de cima:
+  #   - "192.168.100.1"
+  #   - "192.168.100.4"
+
+listen:
+  host: "0.0.0.0"
+  port: 4242
+
+punchy:
+  punch: true
+relay:
+  am_relay: false
+  use_relays: true
+tun:
+  disabled: false
+  dev: nebula1
+  drop_local_broadcast: false
+  drop_multicast: false
+  tx_queue: 500
+  mtu: 1300
+  routes:
+logging:
+  level: info
+  format: text
+firewall:
+  outbound_action: drop
+  inbound_action: drop
+  conntrack:
+    tcp_timeout: 12m
+    udp_timeout: 3m
+    default_timeout: 10m
+  outbound:
+    - port: any
+      proto: any
+      host: any
+  inbound:
+    - port: any
+      proto: any
+      host: any

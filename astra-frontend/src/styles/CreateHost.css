@@ -13,15 +13,26 @@
 
 /* Container que ocupa a largura total */
 .host-container {
-    display: flex;
-    justify-content: center;
-    padding: 10px; /* Menos padding lateral para mobile */
-    width: 100%;
+    padding: 20px 40px 40px 40px;
+    max-width: 900px; /* Aumentado de 600px para 900px para mais espaço em desktop */
+    margin: 0 auto;
+}
+
+/* Adicione esta media query para telas maiores */
+@media (min-width: 1024px) {
+    .host-container {
+        max-width: 1100px; /* Ainda mais amplo em telas muito grandes */
+        padding: 30px 50px 50px 50px;
+    }
+    
+    .host-card {
+        padding: 40px 35px;
+    }
 }
 
 .host-card {
     background: var(--card-bg);
-    width: 1556px;
+    width: 100%; /* Mudança: de 1556px para 100% para ser responsivo */
     padding: 30px 25px;
     border-radius: 20px;
     box-shadow: var(--shadow-soft);
@@ -36,6 +47,33 @@
     margin-bottom: 25px;
     border-left: 4px solid var(--primary-purple);
     padding-left: 15px;
+}
+
+.host-header-with-back {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #64748b;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background-color: #475569;
+    transform: translateX(-2px);
 }
 
 /* Espaçamento expandido entre os grupos */
@@ -81,6 +119,57 @@ input:focus, select:focus, textarea:focus {
 .input-with-select, .input-with-port {
     display: flex;
     gap: 10px;
+}
+
+.date-row {
+    align-items: flex-start;
+}
+
+.date-input-wrapper {
+    position: relative;
+    max-width: 240px; /* Mudança: de width: 1060px para max-width: 240px para limitar */
+    width: 100%;
+}
+
+.date-input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid #d0d7ff;
+    border-radius: 1rem;
+    background: #f8faff;
+    color: #1f2b4d;
+    font-size: 0.95rem;
+    box-shadow: inset 0 1px 2px rgba(18, 52, 128, 0.08);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.date-input:hover,
+.date-input:focus {
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 4px rgba(94, 124, 255, 0.12);
+    background: #ffffff;
+    outline: none;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.1rem;
+    height: 1.1rem;
+    color: #5e7cff;
+    opacity: 0.9;
+}
+
+.date-row label {
+    margin-bottom: 0.35rem;
+    color: #465575;
+    font-weight: 500;
 }
 
 /* Ajuste para mobile: se a tela for pequena, eles empilham */
@@ -155,4 +244,90 @@ input:focus, select:focus, textarea:focus {
 
 .btn-primary:active {
     transform: scale(0.98);
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-success {
+    background: #d1fae5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+}
+
+.notification-error {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+.input-error {
+    border-color: #ef4444 !important;
+    background-color: #fee2e2 !important;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    font-weight: 500;
+}
+
+.nav-link {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    opacity: 0.8;
+    gap: 8px !important;
 }

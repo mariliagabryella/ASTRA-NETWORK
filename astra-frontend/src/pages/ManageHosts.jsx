@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RefreshCw, Trash2, Settings, Plus } from 'lucide-react';
+import { RefreshCw, Trash2, Settings, Plus, Download } from 'lucide-react';
 import '../styles/ManageHosts.css';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
-
 
 const ManageHosts = () => {
     const [hosts, setHosts] = useState([]);
@@ -14,7 +13,7 @@ const ManageHosts = () => {
         try {
             const response = await fetch(`${API_URL}`);
             const data = await response.json();
-            console.log("Dados que chegaram do Banco:", data.data); // ADICIONE ISTO
+            console.log("Dados que chegaram do Banco:", data.data);
             if (data.success) setHosts(data.data);
         } catch (error) {
             console.error("Erro:", error);
@@ -22,33 +21,53 @@ const ManageHosts = () => {
     };
 
     const deleteHost = async (e, id) => {
-        e.stopPropagation(); // Impede que o clique na linha (navegação) aconteça
+        e.stopPropagation();
         if (window.confirm("Tens a certeza que desejas eliminar este host?")) {
             try {
                 const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-                if (response.ok) fetchHosts(); // Recarrega a lista
+                if (response.ok) fetchHosts();
             } catch (error) {
                 console.error("Erro ao eliminar:", error);
             }
         }
     };
 
-    useEffect(() => { fetchHosts(); }, []);
+    const downloadConfig = async (e, id, hostName) => {
+        e.stopPropagation();
+        try {
+            const response = await fetch(`${API_URL}/download/${id}`);
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${hostName}-config.yaml`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }
+        } catch (error) {
+            console.error("Erro ao descarregar config:", error);
+        }
+    };
+
+    useEffect(() => { 
+        fetchHosts(); 
+    }, []); // Dependência vazia = roda apenas uma vez
 
     return (
         <div className="manage-container">
             <header className="manage-header">
                 <h2 className="manage-title">Inventário de Rede</h2>
 
-                {/* Container para alinhar os botões à direita */}
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button onClick={fetchHosts} className="refresh-btn">
                         <RefreshCw size={18} /> Atualizar
                     </button>
 
-                    {/* Novo Botão de Mais */}
                     <Link to="/provision" className="refresh-btn"
-                    style={{ textDecoration: 'none',gap: '8px'}}
+                    style={{ textDecoration: 'none', gap: '8px'}}
                     >
                         <Plus size={18} /> Novo Host
                     </Link>
@@ -93,6 +112,13 @@ const ManageHosts = () => {
                                 </td>
                                 <td>
                                     <div className="actions-cell">
+                                        <button
+                                            className="action-icon download"
+                                            onClick={(e) => downloadConfig(e, host._id, host.name)}
+                                            title="Descarregar config.yaml"
+                                        >
+                                            <Download size={18} />
+                                        </button>
                                         <button
                                             className="action-icon edit"
                                             onClick={(e) => { e.stopPropagation(); navigate(`/host/${host._id}`); }}

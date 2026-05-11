@@ -204,88 +204,38 @@
     color: #64748b;
 }
 
-/* Cores para a coluna Lighthouse */
-.text-yes {
-    color: #10b981;
-    /* Verde */
-    font-weight: bold;
+.actions-cell {
+    display: flex;
+    gap: 8px;
 }
 
-.text-no {
-    color: #64748b;
-    /* Cinza */
-}
-
-/* Linha da tabela clicável */
-.clickable-row {
+.action-icon {
+    background: none;
+    border: none;
+    padding: 8px;
     cursor: pointer;
-    transition: background 0.2s;
-}
-
-.clickable-row:hover {
-    background-color: #f1f5f9 !important;
-}
-
-/* Estilo do Modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-
-.modal-content {
-    background: white;
-    width: 450px;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.info-group {
-    margin-bottom: 15px;
-}
-
-.info-group label {
-    display: block;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #94a3b8;
-    font-weight: 700;
-}
-
-.info-group p {
-    margin: 5px 0;
-    color: #1e293b;
-    font-size: 15px;
-}
-
-.key-box {
-    background: #f8fafc;
-    padding: 10px;
     border-radius: 6px;
-    font-size: 11px;
-    overflow-x: auto;
-    border: 1px solid #e2e8f0;
-    color: #475569;
+    color: #64748b;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.close-icon {
-    cursor: pointer;
-    color: #64748b;
+.action-icon.edit {
+    color: #3b82f6;
+}
+
+.action-icon.edit:hover {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.action-icon.delete {
+    color: #ef4444;
+}
+
+.action-icon.delete:hover {
+    background: #fee2e2;
+    color: #b91c1c;
 }
