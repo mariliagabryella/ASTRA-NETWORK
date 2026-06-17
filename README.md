@@ -1,93 +1,176 @@
-# astra-network
+<p align="center">
+  <img src="astra-frontend/src/assets/logo_white.png" alt="Astra Network" width="220">
+</p>
 
+<h1 align="center">Astra Network</h1>
 
+<p align="center">
+  Plataforma self-hosted de gestão de redes overlay <a href="https://github.com/slackhq/nebula">Nebula</a>, com geração e assinatura automática de certificados, gestão de hosts e exportação da configuração final em YAML.
+</p>
 
-## Getting started
+<p align="center">
+  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-Express%205-339933?logo=node.js&logoColor=white">
+  <img alt="React" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white">
+  <img alt="MongoDB" src="https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-blue">
+</p>
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+---
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 📖 Sobre o projeto
 
-## Add your files
+O **Astra Network** é uma aplicação full-stack (Node.js/Express + React/Vite) que funciona como um painel de controlo para redes [Nebula](https://github.com/slackhq/nebula), a VPN mesh overlay de código aberto criada pela Slack.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+A gestão manual de uma rede Nebula passa por gerar à mão a autoridade certificadora (CA), gerar e assinar certificados para cada host, e escrever o ficheiro `config.yml` de cada máquina. O Astra Network automatiza todo esse fluxo através de uma interface web: inicializa a CA, assina certificados, atribui IPs automaticamente, identifica lighthouses e gera o ficheiro de configuração final pronto a usar em cada host.
+
+Este projeto foi inspirado pelo [Gestor_nebulaVpn](https://github.com/GuilhermeGarcia-pascoa/Gestor_nebulaVpn) de GuilhermeGarcia-pascoa, construído diretamente sobre o [Nebula](https://github.com/slackhq/nebula) da Slack, e segue a filosofia de gestão centralizada de redes overlay popularizada pela [Defined Networking](https://www.defined.net/) (a empresa fundada pelos criadores do Nebula).
+
+## ✨ Funcionalidades
+
+- **Assistente de configuração inicial** — define o IP base e a máscara da rede no primeiro arranque.
+- **Gestão da Autoridade Certificadora (CA)** — inicializa a CA Nebula diretamente a partir da interface, com duração configurável.
+- **CRUD de hosts** — cria, edita, consulta e remove hosts da rede.
+- **Geração e assinatura automática de certificados** — cada host criado/editado é automaticamente assinado pela CA usando o binário `nebula-cert`.
+- **Atribuição automática de IP** — sugere o próximo IP livre dentro da rede configurada.
+- **Suporte a lighthouses** — marca qualquer host como lighthouse e a app atualiza o `static_host_map` e a lista de lighthouses de todos os ficheiros gerados.
+- **Exportação de `config.yaml`** — gera e permite descarregar a configuração Nebula completa e pronta a usar para cada host (certificados embebidos, mapa de hosts estáticos, lighthouses, firewall, etc.).
+- **Configurações persistentes** — caminhos do binário `nebula-cert` e da CA configuráveis e guardados em disco.
+
+## 🏗️ Arquitetura / Stack tecnológica
+
+| Camada     | Tecnologias |
+|------------|-------------|
+| Backend    | Node.js, Express 5, Mongoose (MongoDB), `nebula-cert` (via `child_process`), Archiver, dotenv |
+| Frontend   | React 19, Vite, React Router 7, lucide-react |
+| Base de dados | MongoDB |
+| Overlay VPN | [Nebula](https://github.com/slackhq/nebula) (slackhq) |
+
+O backend nunca implementa criptografia própria: invoca o binário oficial `nebula-cert` para gerar a CA e assinar certificados, e guarda apenas o resultado (chaves e certificados) na base de dados.
+
+## 📸 Capturas de ecrã
+
+<p align="center">
+  <img src="fotos/Screenshot from 2026-04-28 17-41-19.png" alt="Configuração YAML gerada" width="500"><br>
+  <em>Configuração Nebula gerada automaticamente para um host</em>
+</p>
+
+<p align="center">
+  <img src="fotos/Screenshot from 2026-04-29 12-41-19.png" alt="Documento de host na base de dados" width="600"><br>
+  <em>Documento de um host guardado no MongoDB</em>
+</p>
+
+## 🧰 Pré-requisitos
+
+- [Node.js](https://nodejs.org/) 18 ou superior
+- [MongoDB](https://www.mongodb.com/) em execução (local ou remoto)
+- Binários oficiais [`nebula`](https://github.com/slackhq/nebula/releases) e `nebula-cert` (necessários apenas no backend, para gerar a CA e assinar certificados)
+
+## ⚙️ Instalação
+
+```bash
+git clone https://github.com/<o-teu-user>/astra-network.git
+cd astra-network
+```
+
+### Backend
+
+```bash
+cd astra-backend
+npm install
+cp .env.example .env   # edita PORT e MONGODB_URI
+```
+
+Coloca os binários `nebula` e `nebula-cert` (descarregados das [releases oficiais](https://github.com/slackhq/nebula/releases)) dentro de `astra-backend/bin/` e garante permissões de execução:
+
+```bash
+chmod +x bin/nebula bin/nebula-cert
+```
+
+```bash
+npm run dev   # ou: npm start
+```
+
+### Frontend
+
+```bash
+cd astra-frontend
+npm install
+cp .env.example .env   # confirma VITE_API_URL (ex: http://localhost:5000/api/hosts)
+npm run dev
+```
+
+A aplicação fica disponível em `http://localhost:5173` (frontend) e a API em `http://localhost:5000` (backend).
+
+## ▶️ Como usar
+
+1. No primeiro acesso, define o **IP base** (ex: `10.0.0`) e a **máscara** (ex: `24`) da rede.
+2. Em **Configurações**, inicializa a **CA** da rede (nome e duração do certificado raiz).
+3. Cria um novo **host**: nome, grupos, se é lighthouse, IP público/domínio e porta. O Astra atribui automaticamente o próximo IP interno livre e gera o certificado assinado pela CA.
+4. Na página de detalhes do host, descarrega o `config.yaml` final — já com a chave privada, o certificado e o mapa de hosts/lighthouses preenchidos.
+5. Copia esse ficheiro para `/etc/nebula/config.yml` em cada máquina e arranca o serviço `nebula -config /etc/nebula/config.yml`.
+
+## 🗂️ Estrutura do projeto
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.access.softi9.pt/m.silva/astra-network.git
-git branch -M main
-git push -uf origin main
+astra-network/
+├── astra-backend/
+│   ├── bin/                # binários nebula / nebula-cert (não versionados)
+│   ├── ca/                 # CA gerada (ca.crt / ca.key — ignorado no git)
+│   ├── src/
+│   │   ├── config/         # ligação à BD + template YAML
+│   │   ├── controllers/    # lógica das rotas (hosts, CA, rede)
+│   │   ├── models/         # esquemas Mongoose (Host, NetworkConfig)
+│   │   ├── services/       # cryptoService (nebula-cert) e configService (YAML)
+│   │   └── server.js
+│   └── package.json
+├── astra-frontend/
+│   ├── src/
+│   │   ├── components/     # CreateHost, NetworkSetupModal
+│   │   ├── pages/           # ManageHosts, HostDetails, Settings
+│   │   └── App.jsx
+│   └── package.json
+└── fotos/                  # capturas de ecrã
 ```
 
-## Integrate with your tools
+## 🔌 Endpoints da API
 
-- [ ] [Set up project integrations](https://gitlab.access.softi9.pt/m.silva/astra-network/-/settings/integrations)
+| Método | Endpoint                         | Descrição |
+|--------|-----------------------------------|-----------|
+| GET    | `/api/hosts`                      | Lista todos os hosts |
+| POST   | `/api/hosts`                      | Cria um host (gera e assina certificado) |
+| GET    | `/api/hosts/:id`                  | Detalhe de um host |
+| PUT    | `/api/hosts/:id`                  | Atualiza um host |
+| DELETE | `/api/hosts/:id`                  | Remove um host |
+| GET    | `/api/hosts/download/:id`         | Descarrega o `config.yaml` final do host |
+| GET    | `/api/hosts/next-ip`              | Sugere o próximo IP livre |
+| GET    | `/api/hosts/network-config`       | Obtém a configuração base da rede |
+| POST   | `/api/hosts/network-config`       | Guarda a configuração base da rede |
+| GET    | `/api/ca/status`                  | Estado da CA |
+| POST   | `/api/hosts/settings/generate-ca` | Inicializa a CA |
+| GET/POST | `/api/hosts/settings/paths`     | Lê/define caminhos do binário e da CA |
 
-## Collaborate with your team
+## 🔒 Notas de segurança
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+- `ca.key` e ficheiros `.env` já estão excluídos via `.gitignore` — nunca os comites.
+- As chaves privadas dos hosts ficam guardadas na base de dados; protege o acesso ao MongoDB em produção.
+- Esta ferramenta foi pensada para uso em rede local/confiável (homelab); para produção, considera adicionar autenticação à API.
 
-## Test and Deploy
+## 🗺️ Roadmap
 
-Use the built-in continuous integration in GitLab.
+- [ ] Autenticação na API (já existem dependências `jsonwebtoken`/`bcryptjs` previstas para isso)
+- [ ] Containerização com Docker Compose (backend + frontend + MongoDB)
+- [ ] Revogação de certificados
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## 🙏 Inspiração e créditos
 
-***
+- [Nebula](https://github.com/slackhq/nebula) — a VPN overlay mesh da Slack sobre a qual este projeto é construído.
+- [Gestor_nebulaVpn](https://github.com/GuilhermeGarcia-pascoa/Gestor_nebulaVpn) de **GuilhermeGarcia-pascoa** — projeto que serviu de inspiração inicial.
+- [Defined Networking](https://www.defined.net/) — plataforma comercial dos criadores do Nebula, cuja filosofia de gestão centralizada inspirou o conceito deste painel.
 
-# Editing this README
+## 📄 Licença
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Distribuído sob a licença MIT. Consulta o ficheiro `LICENSE` para mais detalhes.
 
-## Suggestions for a good README
+## ✍️ Autor
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Desenvolvido por **Marília**.
