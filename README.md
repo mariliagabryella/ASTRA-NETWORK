@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="astra-frontend/src/assets/logo_white.png" alt="Astra Network" width="220">
+  <img src="astra-frontend/src/assets/logo_purple-removebg-preview.png" alt="Astra Network" width="220">
 </p>
 
 <h1 align="center">Astra Network</h1>
