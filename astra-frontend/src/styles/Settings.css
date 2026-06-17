@@ -316,3 +316,35 @@
 }
 
 .notification-close:hover { opacity: 1; }
+
+/* ── Browse button (ao lado do input de caminho) ───────────────────── */
+.settings-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.settings-input-row .settings-input {
+    flex: 1;
+}
+
+.settings-browse-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-browse-btn:hover {
+    background: #e0e7ff;
+    border-color: #6d28d9;
+    color: #6d28d9;
+}

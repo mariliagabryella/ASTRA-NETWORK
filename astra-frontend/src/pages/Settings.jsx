@@ -92,6 +92,26 @@ const NetworkSection = ({ onNotify }) => {
 };
 
 // ─── Secção: Caminhos ────────────────────────────────────────────────────────
+
+// Abre o seletor de ficheiros nativo (File System Access API — Chrome/Edge)
+const pickFile = async (accept, onPick) => {
+    if (window.showOpenFilePicker) {
+        try {
+            const [handle] = await window.showOpenFilePicker({ types: accept, multiple: false });
+            onPick(handle.name);
+            return;
+        } catch (e) {
+            if (e.name === 'AbortError') return;
+        }
+    }
+    // Fallback: input escondido
+    const input = document.createElement('input');
+    input.type = 'file';
+    if (accept?.[0]?.accept) input.accept = Object.keys(accept[0].accept).join(',');
+    input.onchange = () => { if (input.files?.[0]) onPick(input.files[0].name); };
+    input.click();
+};
+
 const PathsSection = ({ onNotify }) => {
     const [paths, setPaths] = useState({
         nebulaCert: 'astra-backend/bin/nebula-cert',
@@ -126,7 +146,6 @@ const PathsSection = ({ onNotify }) => {
                 localStorage.setItem('nebula_paths', JSON.stringify(paths));
                 onNotify('success', 'Caminhos guardados com sucesso!');
             } else {
-                // fallback: guarda só no localStorage
                 localStorage.setItem('nebula_paths', JSON.stringify(paths));
                 onNotify('success', 'Caminhos guardados localmente.');
             }
@@ -151,25 +170,53 @@ const PathsSection = ({ onNotify }) => {
             <div className="settings-fields">
                 <div className="settings-field">
                     <label>nebula-cert (executável)</label>
-                    <input
-                        type="text"
-                        className="settings-input mono"
-                        value={paths.nebulaCert}
-                        onChange={e => setPaths({ ...paths, nebulaCert: e.target.value })}
-                        placeholder="Ex: astra-backend/bin/nebula-cert  ou  C:\astra-backend\bin\nebula-cert.exe"
-                    />
-                    <span className="settings-hint">Caminho completo do executável <code>nebula-cert</code>.</span>
+                    <div className="settings-input-row">
+                        <input
+                            type="text"
+                            className="settings-input mono"
+                            value={paths.nebulaCert}
+                            onChange={e => setPaths({ ...paths, nebulaCert: e.target.value })}
+                            placeholder="Ex: C:\astra-backend\bin\nebula-cert.exe"
+                        />
+                        <button
+                            className="settings-browse-btn"
+                            title="Escolher ficheiro"
+                            onClick={() => pickFile(
+                                [{ description: 'Executável nebula-cert', accept: { 'application/octet-stream': ['.exe', ''] } }],
+                                name => setPaths(p => ({ ...p, nebulaCert: name }))
+                            )}
+                        >
+                            <FolderOpen size={16} />
+                        </button>
+                    </div>
+                    <span className="settings-hint">
+                        O seletor preenche o nome — confirma ou ajusta o caminho completo se necessário.
+                    </span>
                 </div>
                 <div className="settings-field">
                     <label>Certificado da CA (.crt)</label>
-                    <input
-                        type="text"
-                        className="settings-input mono"
-                        value={paths.caCrt}
-                        onChange={e => setPaths({ ...paths, caCrt: e.target.value })}
-                        placeholder="Ex: astra-backend/ca/ca.crt"
-                    />
-                    <span className="settings-hint">O ficheiro <code>.key</code> deve estar na mesma pasta com o mesmo nome.</span>
+                    <div className="settings-input-row">
+                        <input
+                            type="text"
+                            className="settings-input mono"
+                            value={paths.caCrt}
+                            onChange={e => setPaths({ ...paths, caCrt: e.target.value })}
+                            placeholder="Ex: C:\astra-backend\ca\ca.crt"
+                        />
+                        <button
+                            className="settings-browse-btn"
+                            title="Escolher ficheiro"
+                            onClick={() => pickFile(
+                                [{ description: 'Certificado CA', accept: { 'application/x-x509-ca-cert': ['.crt'] } }],
+                                name => setPaths(p => ({ ...p, caCrt: name }))
+                            )}
+                        >
+                            <FolderOpen size={16} />
+                        </button>
+                    </div>
+                    <span className="settings-hint">
+                        O ficheiro <code>.key</code> deve estar na mesma pasta com o mesmo nome.
+                    </span>
                 </div>
             </div>
 
